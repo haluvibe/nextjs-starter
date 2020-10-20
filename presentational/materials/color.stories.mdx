@@ -1,0 +1,23 @@
+import { Meta, ColorPalette, ColorItem } from '@storybook/addon-docs/blocks';
+
+import { color } from './color';
+
+<Meta title="materials/Colors" />
+
+# Colors
+
+<ColorPalette>
+  <ColorItem title="Primary" subtitle="main | text" colors={[...Object.values(color.palette.primary)]} />
+  <ColorItem title="Secondary" subtitle="light | main | dark" colors={[...Object.values(color.palette.secondary)]} />
+  <ColorItem title="Success" colors={[...Object.values(color.palette.success)]} />
+  <ColorItem title="Error" colors={[...Object.values(color.palette.error)]} />
+  <ColorItem title="Warning" colors={[...Object.values(color.palette.warning)]} />
+  <ColorItem title="Info" colors={[...Object.values(color.palette.info)]} />
+  <ColorItem
+    title="Monochrome"
+    colors={[
+      ...Object.values(color.monochrome)
+    ]}
+  />
+  <ColorItem title="Border" colors={[color.border]} />
+</ColorPalette>

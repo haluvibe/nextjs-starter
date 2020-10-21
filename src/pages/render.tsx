@@ -1,5 +1,5 @@
 import React from 'react'
-import { RenderAsYouFetch } from '../sandbox/RenderAsYouFetch'
+import { RenderAsYouFetch } from '../../sandbox/RenderAsYouFetch'
 
 type Props = {
   name: string

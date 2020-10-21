@@ -1,5 +1,5 @@
 import React from 'react'
-import { TodoApp } from '../sandbox/ToDoApp'
+import { TodoApp } from '../../sandbox/ToDoApp'
 
 type Props = {
   name: string

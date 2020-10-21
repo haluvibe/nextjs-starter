@@ -2,9 +2,9 @@ import React from 'react'
 import Head from 'next/head'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { theme } from '../theme/create.theme'
+import { theme } from '../../theme/create.theme'
 import { AppProps } from 'next/app'
-import { startMirageServer } from '../mirage/start'
+import { startMirageServer } from '../../mirage/start'
 
 // export let server
 export const mirageServer =

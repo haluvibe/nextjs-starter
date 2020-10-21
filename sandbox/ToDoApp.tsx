@@ -1,7 +1,7 @@
 import React from 'react'
 import useSWR from 'swr'
-import { Button, ButtonTypes } from '../presentational/elements/button/Button'
-import { fetcher } from '../utils/swr'
+import { Button, ButtonTypes } from '../src/presentational/elements/button/Button'
+import { fetcher } from '../src/utils/swr'
 
 // const getTodo = async (id: number) => {
 //   const response = await fetch(`${todosEndpoint}/${id}`)

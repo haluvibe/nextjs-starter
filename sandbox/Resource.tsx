@@ -1,7 +1,7 @@
 // resource.js
 import React from 'react'
-import { Loading } from '../presentational/elements/loading/Loading'
-import { useResource } from '../queries/resource'
+import { Loading } from '../src/presentational/elements/loading/Loading'
+import { useResource } from '../src/queries/resource'
 
 interface IResourceProps {
   id: string

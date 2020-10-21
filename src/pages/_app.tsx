@@ -2,13 +2,12 @@ import React from 'react'
 import Head from 'next/head'
 import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
-import { theme } from '../../theme/create.theme'
+import { theme } from '../../material-ui/create.theme'
 import { AppProps } from 'next/app'
 import { startMirageServer } from '../../mirage/start'
 
 // export let server
-export const mirageServer =
-  !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? startMirageServer() : {}
+export const mirageServer = startMirageServer()
 
 console.log('mirageServer', mirageServer)
 

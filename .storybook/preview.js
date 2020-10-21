@@ -1,7 +1,7 @@
 import React from "react"
 import { ThemeProvider } from '@material-ui/core/styles'
 import { CssBaseline } from '@material-ui/core'
-import { theme } from '../theme/create.theme'
+import { theme } from '../material-ui/create.theme'
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },

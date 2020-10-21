@@ -1,6 +1,6 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { Resource } from './Resource'
-import { useDebounce } from '../hooks/useDebounce.hook'
+import { useDebounce } from '../hooks/useDebounce'
 import { getResource } from '../queries/resource'
 
 export const RenderAsYouFetch: FunctionComponent = () => {

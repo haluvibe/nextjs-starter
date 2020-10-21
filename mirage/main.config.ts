@@ -27,6 +27,12 @@ export const mirageServerConfig: IMirageServerConfig = {
   },
 
   routes() {
+    // workaround for a bug caused by next.js 9.5.5 update
+    this.passthrough((request) => {
+      if (request.url === '/_next/static/development/_devPagesManifest.json') {
+        return true
+      }
+    })
     this.namespace = 'api'
     this.timing = 750
     todosMirageRoutes(this)

@@ -1,4 +1,4 @@
-import useSWR, { ConfigInterface, cache } from 'swr'
+import useSWR, { ConfigInterface } from 'swr'
 import { fetchAndCache, fetcher } from '../utils/swr'
 
 export const getResource = async (id: string) => {
@@ -7,7 +7,5 @@ export const getResource = async (id: string) => {
 }
 
 export const useResource = (id: string, config: ConfigInterface = {}) => {
-  const currentData = cache.get(['resource', id])
-  console.log('currentData', currentData)
-  return useSWR('resource/' + id, fetcher, { revalidateOnMount: false, ...config })
+  return useSWR('resource/' + id, fetcher, config)
 }

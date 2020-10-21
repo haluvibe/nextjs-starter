@@ -10,9 +10,6 @@ const RenderPage: React.FunctionComponent<Props> = () => (
     <div>
       <RenderAsYouFetch />
     </div>
-    <div>
-      <RenderAsYouFetch />
-    </div>
   </div>
 )
 export default RenderPage

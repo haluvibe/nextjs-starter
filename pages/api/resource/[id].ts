@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { NextApiRequest, NextApiResponse } from 'next'
-import { sleep } from '../../../utils/sleep.util'
+import { sleep } from '../../../utils/sleep'
 
 export type Resource = {
   url: string

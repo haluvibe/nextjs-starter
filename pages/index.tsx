@@ -9,9 +9,16 @@ type Props = {
 const Home: React.FunctionComponent<Props> = ({ name }) => (
   <div>
     <p>Hello {name}!</p>
-    <Link href="/render">
-      <a>render as you fetch example</a>
-    </Link>
+    <div>
+      <Link href="/render">
+        <a>render as you fetch example</a>
+      </Link>
+    </div>
+    <div>
+      <Link href="/todo">
+        <a>Todo app example</a>
+      </Link>
+    </div>
   </div>
 )
 export default Home

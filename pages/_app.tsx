@@ -4,6 +4,13 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { theme } from '../theme/create.theme'
 import { AppProps } from 'next/app'
+import { startMirageServer } from '../mirage/start'
+
+// export let server
+export const mirageServer =
+  !process.env.NODE_ENV || process.env.NODE_ENV === 'development' ? startMirageServer() : {}
+
+console.log('mirageServer', mirageServer)
 
 const App: React.FunctionComponent<AppProps> = ({ Component, pageProps }) => {
   React.useEffect(() => {

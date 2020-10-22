@@ -1,46 +1,14 @@
 import React, { useEffect, useState, useRef } from 'react'
 import useSWR from 'swr'
-import { fetcher } from '../src/pages/_app'
-
-const useIsMountedRef = () => {
-  const isMounted = useRef(true)
-
-  useEffect(() => {
-    return () => {
-      isMounted.current = false
-    }
-  }, [])
-
-  return isMounted
-}
+import { useIsMounted } from '../src/hooks/useIsMounted'
+import { useRequestManager } from '../src/hooks/useRequestManager'
+import { fetcher } from '../src/utils/swr'
 
 let tempIdCounter = 1
 
-function useRequestManager() {
-  const [pendingRequestIds, setPendingRequestIds] = useState([])
-
-  function create() {
-    const requestId = Symbol()
-    setPendingRequestIds([...pendingRequestIds, requestId])
-
-    return {
-      done() {
-        setPendingRequestIds((pendingRequestIds) =>
-          pendingRequestIds.filter((id) => id !== requestId)
-        )
-      },
-    }
-  }
-
-  return {
-    create,
-    hasPendingRequests: pendingRequestIds.length > 0,
-  }
-}
-
 export const TailsTodos = () => {
   const manager = useRequestManager()
-  const isMountedRef = useIsMountedRef()
+  const isMounted = useIsMounted()
   const [newTodoRef, setNewTodoRef] = useRefState({ text: '', isDone: false })
 
   const isSaving = manager.hasPendingRequests
@@ -65,7 +33,7 @@ export const TailsTodos = () => {
       body: JSON.stringify({ todo: newTodo }),
     })
 
-    if (isMountedRef.current) {
+    if (isMounted.current) {
       request.done()
     }
 
@@ -74,7 +42,9 @@ export const TailsTodos = () => {
       const changedIndex = cache.todos.findIndex((todo) => todo.id === tempId)
 
       return {
-        todos: cache.todos.map((oldTodo, i) => (i === changedIndex ? newTodoJson.todo : oldTodo)),
+        todos: cache.todos.map((oldTodo, i) =>
+          i === changedIndex ? { ...oldTodo, id: newTodoJson.todo.id } : oldTodo
+        ),
       }
     }, false)
   }
@@ -95,7 +65,7 @@ export const TailsTodos = () => {
       method: 'PATCH',
       body: JSON.stringify({ todo }),
     })
-    if (isMountedRef.current) {
+    if (isMounted.current) {
       request.done()
     }
   }
@@ -113,7 +83,7 @@ export const TailsTodos = () => {
       completedTodos.map((todo) => fetcher(`/api/todos/${todo.id}`, { method: 'DELETE' }))
     )
 
-    if (isMountedRef.current) {
+    if (isMounted.current) {
       request.done()
     }
   }
@@ -169,7 +139,7 @@ export const TailsTodos = () => {
               </ul>
             ) : (
               <p className="px-3 mt-16 text-lg text-center text-gray-500" data-testid="no-todos">
-                Everything's done!
+                Everything`s done!
               </p>
             )}
 

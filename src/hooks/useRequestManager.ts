@@ -1,9 +1,9 @@
-import { useState } from 'react'
+import { useCallback, useState } from 'react'
 
 export const useRequestManager = () => {
   const [pendingRequestIds, setPendingRequestIds] = useState<symbol[]>([])
 
-  function create() {
+  const create = useCallback(() => {
     const requestId = Symbol()
     setPendingRequestIds([...pendingRequestIds, requestId])
 
@@ -14,7 +14,7 @@ export const useRequestManager = () => {
         )
       },
     }
-  }
+  }, [])
   return {
     create,
     hasPendingRequests: pendingRequestIds.length > 0,

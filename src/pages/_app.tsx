@@ -6,25 +6,13 @@ import { theme } from '../../material-ui/create.theme'
 import { AppProps } from 'next/app'
 import { startMirageServer } from '../../mirage'
 import { SWRConfig } from 'swr'
+import { fetcher } from '../utils/swr'
 
 // export let server
 if (process.env.NEXT_PUBLIC_USE_MIRAGE_SERVER === 'true') {
   console.log('ATTENTION - Using mirage server')
   startMirageServer()
 }
-
-export const fetcher = (url, options) =>
-  fetch(url, {
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
-    ...options,
-  }).then((r) => {
-    if (r?.headers?.get('content-type')?.match('json')) {
-      return r.json()
-    }
-  })
 
 const App: React.FunctionComponent<AppProps> = ({ Component, pageProps }) => {
   React.useEffect(() => {

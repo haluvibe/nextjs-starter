@@ -1,6 +1,6 @@
 import { Model } from 'miragejs'
-import { todosMirageFixture, ITodo } from './fixtures/todos'
-import { todosMirageRoutes } from './routes/todos'
+import { ITodo, todosMirageFixture } from '../mirage/fixtures/todos'
+import { todosMirageRoutes } from '../mirage/routes/todos'
 
 export type TEnvironment = 'development' | 'staging' | 'production'
 
@@ -27,15 +27,14 @@ export const mirageServerConfig: IMirageServerConfig = {
   },
 
   routes() {
+    this.namespace = 'api'
+    this.timing = 750
+    todosMirageRoutes(this)
     // workaround for a bug caused by next.js 9.5.5 update
     this.passthrough((request) => {
       if (request.url === '/_next/static/development/_devPagesManifest.json') {
         return true
       }
     })
-    this.namespace = 'api'
-    this.timing = 350
-    todosMirageRoutes(this)
-    this.passthrough()
   },
 }

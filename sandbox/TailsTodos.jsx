@@ -125,6 +125,7 @@ export const TailsTodos = () => {
   const { data, mutate: updateTodosCache } = useSWR('/api/todos')
 
   const todos = data?.todos
+  console.log('todos', todos)
   const done = todos?.filter((todo) => todo.isDone).length
 
   return (

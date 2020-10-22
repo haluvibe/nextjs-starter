@@ -10,7 +10,7 @@ export default async (req: NextApiRequest, res: NextApiResponse<Resource>) => {
   if (!req.url) {
     res.status(200).json({ url: '/' })
   } else {
-    await sleep(Math.random() * 5000)
+    await sleep(5000)
     const url = req.url
     res.status(200).json({ url })
   }

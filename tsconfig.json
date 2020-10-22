@@ -19,5 +19,5 @@
     "target": "esnext"
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts", "**/*.tsx", "routes/setup.todos.mirage.routes.ts"]
+  "include": ["**/*.ts", "**/*.tsx", "routes/setup.todos.mirage.routes.ts", "sandbox/TailsTodo.js"]
 }

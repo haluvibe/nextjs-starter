@@ -4,12 +4,27 @@ import { ThemeProvider } from '@material-ui/core/styles'
 import CssBaseline from '@material-ui/core/CssBaseline'
 import { theme } from '../../material-ui/create.theme'
 import { AppProps } from 'next/app'
-import { startMirageServer } from '../../mirage/start'
+import { startMirageServer } from '../../mirage'
+import { SWRConfig } from 'swr'
 
 // export let server
-export const mirageServer = startMirageServer()
+if (process.env.NEXT_PUBLIC_USE_MIRAGE_SERVER === 'true') {
+  console.log('ATTENTION - Using mirage server')
+  startMirageServer()
+}
 
-console.log('mirageServer', mirageServer)
+export const fetcher = (url, options) =>
+  fetch(url, {
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+    },
+    ...options,
+  }).then((r) => {
+    if (r?.headers?.get('content-type')?.match('json')) {
+      return r.json()
+    }
+  })
 
 const App: React.FunctionComponent<AppProps> = ({ Component, pageProps }) => {
   React.useEffect(() => {
@@ -27,7 +42,14 @@ const App: React.FunctionComponent<AppProps> = ({ Component, pageProps }) => {
       <ThemeProvider theme={theme}>
         {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
         <CssBaseline />
-        <Component {...pageProps} />
+        <SWRConfig
+          value={{
+            refreshInterval: 3000,
+            fetcher,
+          }}
+        >
+          <Component {...pageProps} />
+        </SWRConfig>
       </ThemeProvider>
     </React.Fragment>
   )

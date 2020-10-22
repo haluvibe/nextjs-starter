@@ -8,6 +8,9 @@ module.exports = {
   env: {
     node: true,
   },
+  globals: {
+    fetch: false 
+  },
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/eslint-recommended',

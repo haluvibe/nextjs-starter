@@ -10,23 +10,23 @@ export const todosMirageRoutes = (server: Server): void => {
     return schema.todos.find(request.params.id)
   })
 
-  server.get('/todos/delete/:id', (schema, request) => {
+  server.delete('/todos/:id', (schema, request) => {
     return schema.todos.find(request.params.id).destroy()
   })
 
-  // server.patch('/todos/:id', (schema, request) => {
-  //   const attrs = JSON.parse(request.requestBody).todo
+  server.patch('/todos/:id', (schema, request) => {
+    const attrs = JSON.parse(request.requestBody).todo
 
-  //   return schema.todos.find(request.params.id).update(attrs)
-  // })
+    return schema.todos.find(request.params.id).update(attrs)
+  })
 
-  // server.post(
-  //   '/todos',
-  //   (schema, request) => {
-  //     const attrs = JSON.parse(request.requestBody).todo
+  server.post(
+    '/todos',
+    (schema, request) => {
+      const attrs = JSON.parse(request.requestBody).todo
 
-  //     return schema.todos.create(attrs)
-  //   },
-  //   { timing: 2000 }
-  // )
+      return schema.todos.create(attrs)
+    },
+    {}
+  )
 }

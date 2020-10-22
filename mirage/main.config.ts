@@ -1,6 +1,7 @@
 import { Model } from 'miragejs'
 import { todosMirageFixture, ITodo } from './fixtures/todos'
 import { todosMirageRoutes } from './routes/todos'
+import { urlMirageRoutes } from './routes/url'
 
 export type TEnvironment = 'development' | 'staging' | 'production'
 
@@ -34,8 +35,9 @@ export const mirageServerConfig: IMirageServerConfig = {
       }
     })
     this.namespace = 'api'
-    this.timing = 750
+    this.timing = 350
     todosMirageRoutes(this)
+    urlMirageRoutes(this)
     this.passthrough()
   },
 }

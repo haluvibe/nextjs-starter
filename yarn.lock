@@ -11108,6 +11108,18 @@ use-latest@^1.0.0:
   dependencies:
     use-isomorphic-layout-effect "^1.0.0"
 
+use-mutation@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/use-mutation/-/use-mutation-2.0.1.tgz#0b2849c1d5267c82fda9daa16b2c14192cfc4160"
+  integrity sha512-h3WvWSSgnNf9VD4zaZaN65NZpMcPFHEgRgrVYD0ipHlL2/V8J/LGQfzhK7XJFG8WRtuDVrIpMJaaP5LjhykQpg==
+  dependencies:
+    use-safe-callback "^1.0.2"
+
+use-safe-callback@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/use-safe-callback/-/use-safe-callback-1.0.2.tgz#1e112c144bccccb39d308ac983f4589ea113bed5"
+  integrity sha512-RVeoyxgjJNfu9baNwulBM+HuPQGlcE1MJtrA1w50B5Hd0tyeKvrBIPdCfRx4Trrrxe34M6qRTys/bfpqsKRcyA==
+
 use-subscription@1.4.1:
   version "1.4.1"
   resolved "https://registry.yarnpkg.com/use-subscription/-/use-subscription-1.4.1.tgz#edcbcc220f1adb2dd4fa0b2f61b6cc308e620069"

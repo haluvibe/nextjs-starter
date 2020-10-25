@@ -7,10 +7,11 @@ export const fetcher = (url: string, options: RequestInit = {}) =>
       'Content-Type': 'application/json',
     },
     ...options,
-  }).then((r) => {
-    if (r?.headers?.get('content-type')?.match('json')) {
-      return r.json()
+  }).then((response: Response) => {
+    if (response?.headers?.get('content-type')?.match('json')) {
+      return response.json()
     }
+    return response
   })
 
 export function fetchAndCache(key: string) {

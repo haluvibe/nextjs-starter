@@ -35,34 +35,27 @@ https://storybook.js.org/
 ## sandbox folder
 A sandbox where anything can live, please do delete stale files & folders
 
+## Presentational components
+
+Presentational components should be developed using storybook, not Nextjs. 
+
+Presentational components:
+  - never handle the loading of any data
+  - are pure functional components.
+  - Use useState for simple state
+  - Use useReducer for complex state
+  - exposes the minimum number of props possible
+  - must not use SWR for any reason
+
 ## src File/Folder structure
-
-Please read and understand this article before working with this repository:
-https://medium.com/@dan_abramov/smart-and-dumb-components-7ca2f9a7c7d0
-
-Presentational components should be developed using storybook, not Nextjs.
-
-container
- - uses useReducer for complex state 
- - use SWR for data
- - use useState for simple state
- - no css or html!!!
-
-container/providers
- - globally scoped provider context hooks & components live here
- - less is better, ideally scope context hooks & components to the view
-
-container/mutations
- - SWR create, opdate and delete operations live here
-
-container/queries
- - SWR read operations live here
-
- container/views
- - view scoped context hooks & components live here
+constants
+ - global constants and enums live here
 
 hooks
  - global utility hooks live here
+
+mutations
+ - SWR create, opdate and delete operations live here
 
 pages
  - browser routes live here
@@ -72,14 +65,6 @@ pages
 pages/api
  - api routes live here
  - https://nextjs.org/docs/api-routes/introduction 
-
- presentational
-  - Presentational components live here
-  - Use useState for simple state
-  - Use useReducer for complex state
-  - functional components only
-  - exposes the minimum number of props possible
-  - must not use SWR for any reason
 
 presentational/elements
  - the smallest components that can live on it's own
@@ -93,3 +78,16 @@ presentational/foundation
 
 presentational/prototypes
  - View prototypes without logic live here
+
+providers
+ - globally scoped provider context hooks & components live here
+ - less is better, ideally scope context hooks & components to the view
+
+queries
+ - SWR read operations live here
+
+utils
+ - global utility functions live here
+
+views
+ - view scoped context hooks & components live here

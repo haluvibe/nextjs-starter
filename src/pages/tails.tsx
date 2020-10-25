@@ -1,7 +1,7 @@
 import React from 'react'
-import { TailsTodos } from '../../sandbox/TailsTodos'
 import Link from 'next/link'
 import Head from 'next/head'
+import { TailsTodos } from '../../sandbox/TailsTodos'
 
 type Props = {
   name: string

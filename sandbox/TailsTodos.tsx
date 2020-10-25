@@ -1,14 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react'
-import useSWR from 'swr'
-import { useIsMounted } from '../src/hooks/useIsMounted'
+import React, { useState } from 'react'
+import useSWR, { cache } from 'swr'
+import { useIsMountedRef } from '../src/hooks/useIsMountedRef'
 import { useRequestManager } from '../src/hooks/useRequestManager'
+import { swrKeys } from '../src/constants/swrKeys'
 import { fetcher } from '../src/utils/swr'
+import { updateTodo } from '../src/mutations/updateTodo'
+import { useRefState } from '../src/hooks/useRefState'
 
 let tempIdCounter = 1
 
 export const TailsTodos = () => {
+  const { data: todos, mutate: updateTodosCache } = useSWR(swrKeys.todos, fetcher)
+
   const manager = useRequestManager()
-  const isMounted = useIsMounted()
+  const isMountedRef = useIsMountedRef()
   const [newTodoRef, setNewTodoRef] = useRefState({ text: '', isDone: false })
 
   const isSaving = manager.hasPendingRequests
@@ -33,39 +38,27 @@ export const TailsTodos = () => {
       body: JSON.stringify({ todo: newTodo }),
     })
 
-    if (isMounted.current) {
+    if (isMountedRef.current) {
       request.done()
     }
 
     // Update client side cache with record from server
-    updateTodosCache(async (cache) => {
+    updateTodosCache((cache) => {
       const changedIndex = cache.todos.findIndex((todo) => todo.id === tempId)
 
       return {
-        todos: cache.todos.map((oldTodo, i) =>
-          i === changedIndex ? { ...oldTodo, id: newTodoJson.todo.id } : oldTodo
-        ),
+        todos: cache.todos.map((oldTodo, i) => (i === changedIndex ? newTodoJson.todo : oldTodo)),
       }
     }, false)
   }
 
   async function saveTodo(todo) {
-    // Optimistic UI update
-    const changedIndex = todos.findIndex((t) => t.id === todo.id)
-    updateTodosCache(
-      {
-        todos: todos.map((oldTodo, i) => (i === changedIndex ? todo : oldTodo)),
-      },
-      false
-    )
-
     // Save the updated todo
     const request = manager.create()
-    await fetcher(`/api/todos/${todo.id}`, {
-      method: 'PATCH',
-      body: JSON.stringify({ todo }),
-    })
-    if (isMounted.current) {
+    await updateTodo(todo)
+    const todos = cache.get(swrKeys.todos)
+    console.log('saveTodo -> todos', todos)
+    if (isMountedRef.current) {
       request.done()
     }
   }
@@ -83,7 +76,7 @@ export const TailsTodos = () => {
       completedTodos.map((todo) => fetcher(`/api/todos/${todo.id}`, { method: 'DELETE' }))
     )
 
-    if (isMounted.current) {
+    if (isMountedRef.current) {
       request.done()
     }
   }
@@ -92,10 +85,6 @@ export const TailsTodos = () => {
     setNewTodoRef({ ...newTodoRef.current, ...{ text: event.target.value } })
   }
 
-  const { data, mutate: updateTodosCache } = useSWR('/api/todos')
-
-  const todos = data?.todos
-  console.log('todos', todos)
   const done = todos?.filter((todo) => todo.isDone).length
 
   return (
@@ -131,11 +120,12 @@ export const TailsTodos = () => {
               </form>
             </div>
 
-            {data.todos.length > 0 ? (
+            {todos.length > 0 ? (
               <ul className="mt-8">
-                {data.todos.map((todo) => (
-                  <Todo todo={todo} onChange={saveTodo} key={todo.id} />
-                ))}
+                {todos.map((todo) => {
+                  console.log('todo', todo)
+                  return <Todo todo={todo} onChange={saveTodo} key={todo.id} />
+                })}
               </ul>
             ) : (
               <p className="px-3 mt-16 text-lg text-center text-gray-500" data-testid="no-todos">
@@ -164,18 +154,6 @@ export const TailsTodos = () => {
       </div>
     </div>
   )
-}
-
-function useRefState(initialState) {
-  const [state, setState] = useState(initialState)
-  const ref = useRef(state)
-
-  function updateRefAndSetState(newState) {
-    ref.current = newState
-    setState(newState)
-  }
-
-  return [ref, updateRefAndSetState]
 }
 
 function Todo({ todo, onChange }) {

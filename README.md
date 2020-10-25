@@ -28,6 +28,10 @@ https://mswjs.io/
 
 https://material-ui.com/
 
+## SEO optimization
+// TODO
+Mastering nextjs course
+
 ## Styleguide Driven Development tool
 
 https://storybook.js.org/

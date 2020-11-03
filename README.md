@@ -1,5 +1,44 @@
 # Project thoughts
 
+## Questions
+
+Supported browsers
+
+## SWR
+How to structure SWR...
+```
+import useSWR from 'swr'
+
+import { getUser } from '@lib/authenticate'
+import { API_USER } from '@lib/api-endpoints'
+
+export default function useUser() {
+  const swr = useSWR(API_USER, () => getUser())
+
+  useEffect(() => {
+    if (swr.data && !swr.data.user && redirect) {
+      // redirect to login
+      Router.replace(
+        `/login`
+      )
+    }
+  }, [swr.data])
+
+  swr.isLoggedOut = swr.data && !swr.data.user
+  swr.user = swr.data?.user
+
+  return swr
+}
+```
+
+## Rules for a lightning fast app - the goal is to follow the same rules as Vercel Dashboard
+* Uses https://github.com/zeit/swr to ensure data is up-to-date while staying fast
+* All pages are auto-exported to static HTML, no getInitialProps on any pages
+* All pages implement a loading shell, an example of this is: https://vercel.com/dashboard/abcdefgh
+* When a user opens the page a fetch is done against the API, if you're logged in they have a cookie set already, if not you're redirected to the login screen
+
+see https://github.com/vercel/next.js/discussions/10724 for more info
+
 ## Supported Browsers
 
 Latest versions of Chrome, Safari, Firefox and Edge on all devices

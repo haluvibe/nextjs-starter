@@ -35,7 +35,10 @@ export const mirageServerConfig: IMirageServerConfig = {
     })
     this.namespace = 'api'
     this.timing = 350
+    // https://miragejs.com/docs/main-concepts/shorthands/#resource-helper
+    this.resource('todos', { only: ['delete', 'show'] })
     todosMirageRoutes(this)
+    // https://miragejs.com/docs/getting-started/overview/#passthrough
     this.passthrough()
   },
 }

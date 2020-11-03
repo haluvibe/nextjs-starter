@@ -1,13 +1,13 @@
 import { useRef, useState } from 'react'
 
-export function useRefState(initialState) {
-  const [state, setState] = useState(initialState)
-  const ref = useRef(state)
+export function useRefState<T>(initialState: T) {
+  const [, setState] = useState<T>(initialState)
+  const ref = useRef<T>(initialState)
 
-  function updateRefAndSetState(newState) {
+  const updateRefAndSetState = (newState: T): void => {
     ref.current = newState
     setState(newState)
   }
 
-  return [ref, updateRefAndSetState]
+  return { ref, updateRefAndSetState }
 }

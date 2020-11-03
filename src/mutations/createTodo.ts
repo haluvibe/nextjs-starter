@@ -1,30 +1,40 @@
+import { cache, mutate } from 'swr'
 import { ITodo } from '../../mirage/fixtures/todos'
-import { fetcher } from '../utils/swr'
-import { mutate, cache } from 'swr'
-import useMutation from 'use-mutation'
 import { swrKeys } from '../constants/swrKeys'
 
-export const createTodo = async (newTodo: ITodo): Promise<ITodo> => {
-  const response = await fetcher(swrKeys.todos, {
+let tempIdCounter = 1
+
+export const createTodo = async (newTodo: Partial<ITodo>) => {
+  const todos = cache.get(swrKeys.todos)
+
+  // Optimistic UI update
+  const tempId = `t${tempIdCounter}`
+  tempIdCounter++
+  const localNewTodo = { ...newTodo, id: tempId }
+  mutate(swrKeys.todos, (todos) => [...todos, localNewTodo], false)
+
+  // Create the todo
+  const response = await fetch('/api/todos', {
     method: 'POST',
     body: JSON.stringify(newTodo),
   })
 
-  if (!response.ok) throw new Error(response.statusText)
+  // rollback in the event of any errors
+  if (!response.ok) {
+    mutate(swrKeys.todos, todos, true)
+    // throw new Error(response.statusText)
+    return
+  }
 
-  return await response.json()
-}
+  // Update client side cache with record from server
+  const serverNewTodo = await response.json()
+  mutate(
+    swrKeys.todos,
+    (todos) => {
+      const changedIndex = todos.findIndex((todo) => todo.id === tempId)
 
-export const useCreateTodo = () => {
-  return useMutation<ITodo>(createTodo, {
-    onMutate({ input }) {
-      const oldTodos = cache.get(swrKeys.todos)
-      console.log('onMutate -> oldTodos', oldTodos)
-      return () => mutate(swrKeys.todos, oldTodos, false) // rollback if it failed
+      return todos.map((oldTodo, index) => (index === changedIndex ? serverNewTodo : oldTodo))
     },
-
-    onFailure({ error, rollback }) {
-      if (error && rollback) rollback()
-    },
-  })
+    false
+  )
 }

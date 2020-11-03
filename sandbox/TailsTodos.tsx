@@ -1,88 +1,59 @@
-import React, { useState } from 'react'
-import useSWR, { cache } from 'swr'
+import React, { ChangeEvent, SyntheticEvent, useState } from 'react'
+import useSWR from 'swr'
 import { useIsMountedRef } from '../src/hooks/useIsMountedRef'
 import { useRequestManager } from '../src/hooks/useRequestManager'
 import { swrKeys } from '../src/constants/swrKeys'
-import { fetcher } from '../src/utils/swr'
 import { updateTodo } from '../src/mutations/updateTodo'
 import { useRefState } from '../src/hooks/useRefState'
-
-let tempIdCounter = 1
+import { deleteCompletedTodos } from '../src/mutations/deleteCompletedTodos'
+import { ITodo } from '../mirage/fixtures/todos'
+import { createTodo } from '../src/mutations/createTodo'
 
 export const TailsTodos = () => {
-  const { data: todos, mutate: updateTodosCache } = useSWR(swrKeys.todos, fetcher)
+  const { data: todos } = useSWR<ITodo[]>(swrKeys.todos)
 
   const manager = useRequestManager()
-  const isMountedRef = useIsMountedRef()
-  const [newTodoRef, setNewTodoRef] = useRefState({ text: '', isDone: false })
-
   const isSaving = manager.hasPendingRequests
+  const isMountedRef = useIsMountedRef()
+  const { ref: newTodoRef, updateRefAndSetState: setNewTodoRef } = useRefState<Partial<ITodo>>({
+    text: '',
+    isDone: false,
+  })
 
-  async function createTodo(event) {
+  async function handleSubmit(event: SyntheticEvent<EventTarget>) {
     event.preventDefault()
     const newTodo = { ...newTodoRef.current }
-    const tempId = `t${tempIdCounter}`
-    tempIdCounter++
-    const localNewTodo = { ...newTodo, ...{ id: tempId } }
-
-    // Optimistic UI update
-    updateTodosCache({ todos: [...todos, localNewTodo] }, false)
-
     // Resetting the new todo textbox
     setNewTodoRef({ text: '', isDone: false })
-
-    // Create the todo
     const request = manager.create()
-    const newTodoJson = await fetcher('/api/todos', {
-      method: 'POST',
-      body: JSON.stringify({ todo: newTodo }),
-    })
-
-    if (isMountedRef.current) {
-      request.done()
-    }
-
-    // Update client side cache with record from server
-    updateTodosCache((cache) => {
-      const changedIndex = cache.todos.findIndex((todo) => todo.id === tempId)
-
-      return {
-        todos: cache.todos.map((oldTodo, i) => (i === changedIndex ? newTodoJson.todo : oldTodo)),
-      }
-    }, false)
-  }
-
-  async function saveTodo(todo) {
-    // Save the updated todo
-    const request = manager.create()
-    await updateTodo(todo)
-    const todos = cache.get(swrKeys.todos)
-    console.log('saveTodo -> todos', todos)
+    createTodo(newTodo)
     if (isMountedRef.current) {
       request.done()
     }
   }
 
-  async function deleteCompleted() {
+  async function handleClick() {
     const request = manager.create()
-    const completedTodos = todos.filter((t) => t.isDone)
-    const remainingTodos = todos.filter((t) => !t.isDone)
 
-    // Optimistic UI update
-    updateTodosCache({ todos: remainingTodos }, false)
-
-    // Delete all completed todos
-    await Promise.all(
-      completedTodos.map((todo) => fetcher(`/api/todos/${todo.id}`, { method: 'DELETE' }))
-    )
+    deleteCompletedTodos()
 
     if (isMountedRef.current) {
       request.done()
     }
   }
 
-  function handleChange(event) {
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setNewTodoRef({ ...newTodoRef.current, ...{ text: event.target.value } })
+  }
+
+  async function saveTodo(todo: ITodo) {
+    const request = manager.create()
+
+    await updateTodo(todo)
+
+    if (isMountedRef.current) {
+      request.done()
+    }
   }
 
   const done = todos?.filter((todo) => todo.isDone).length
@@ -109,7 +80,7 @@ export const TailsTodos = () => {
         ) : (
           <div>
             <div className="px-3">
-              <form onSubmit={createTodo} data-testid="new-todo-form">
+              <form onSubmit={handleSubmit} data-testid="new-todo-form">
                 <input
                   type="text"
                   value={newTodoRef.current.text}
@@ -123,8 +94,7 @@ export const TailsTodos = () => {
             {todos.length > 0 ? (
               <ul className="mt-8">
                 {todos.map((todo) => {
-                  console.log('todo', todo)
-                  return <Todo todo={todo} onChange={saveTodo} key={todo.id} />
+                  return <Todo todo={todo} saveTodo={saveTodo} key={todo.id} />
                 })}
               </ul>
             ) : (
@@ -141,7 +111,7 @@ export const TailsTodos = () => {
               ) : null}
               {done > 0 ? (
                 <button
-                  onClick={deleteCompleted}
+                  onClick={handleClick}
                   className="font-medium text-blue-500 focus:outline-none focus:text-blue-300"
                   data-testid="clear-completed"
                 >
@@ -156,15 +126,15 @@ export const TailsTodos = () => {
   )
 }
 
-function Todo({ todo, onChange }) {
+function Todo({ todo, saveTodo }: { todo: ITodo; saveTodo: (todo: ITodo) => Promise<void> }) {
   const [isFocused, setIsFocused] = useState(false)
-  const [localTodoRef, setLocalTodo] = useRefState({ ...todo })
+  const { ref: localTodoRef, updateRefAndSetState: setLocalTodo } = useRefState({ ...todo })
 
-  function handleChange(event) {
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
     setLocalTodo({ ...localTodoRef.current, ...{ text: event.target.value } })
   }
 
-  function handleCheck(event) {
+  function handleCheck(event: ChangeEvent<HTMLInputElement>) {
     setLocalTodo({
       ...localTodoRef.current,
       ...{ isDone: event.target.checked },
@@ -175,7 +145,7 @@ function Todo({ todo, onChange }) {
 
   function handleSubmit(event) {
     event.preventDefault()
-    commitChanges(localTodoRef.current)
+    commitChanges()
   }
 
   function commitChanges() {
@@ -185,7 +155,7 @@ function Todo({ todo, onChange }) {
       localTodoRef.current.text !== todo.text || localTodoRef.current.isDone !== todo.isDone
 
     if (hasChanges) {
-      onChange(localTodoRef.current)
+      saveTodo(localTodoRef.current)
     }
   }
 

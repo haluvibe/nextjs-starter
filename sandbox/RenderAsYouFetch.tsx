@@ -1,7 +1,7 @@
 import React, { FunctionComponent, useEffect, useState } from 'react'
 import { Resource } from './Resource'
 import { useDebounce } from '../src/hooks/useDebounce'
-import { getResource } from '../src/container/queries/resource'
+import { getResource } from '../src/queries/resource'
 
 export const RenderAsYouFetch: FunctionComponent = () => {
   const [id, setID] = useState<string>('')

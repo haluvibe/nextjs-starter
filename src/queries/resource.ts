@@ -1,6 +1,6 @@
 import useSWR, { ConfigInterface, cache } from 'swr'
-import { swrKeys } from '../../swrKeys'
-import { fetchAndCache, fetcher } from '../../utils/swr'
+import { swrKeys } from '../constants/swrKeys'
+import { fetchAndCache, fetcher } from '../utils/swr'
 
 export const getResource = async (id: string) => {
   if (!id) return
